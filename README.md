@@ -1,4 +1,8 @@
 # JDeMire-Secure-Azure-Foundation
+
+![Terraform CI](https://github.com/jdemire-sys/JDeMire-Secure-Azure-Foundation/actions/workflows/terraform.yml/badge.svg?branch=main)
+
+
 My first cloud project to demonstrate my cloud skills.
 This project demonstrates core Azure administration (AZ-104), security engineering (AZ-500), and Terraform Associate skills with a zero-cost footprint on an Azure for Students subscription.
 

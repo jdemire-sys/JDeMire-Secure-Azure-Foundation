@@ -2,10 +2,10 @@ name: Terraform CI
 
 on:
   push:
-    branches: [ prod ]
+    branches: [ main ]
     paths: [ "infra/**", "policy/**" ]
   pull_request:
-    branches: [ prod ]
+    branches: [ main ]
     paths: [ "infra/**", "policy/**" ]
 
 jobs:
@@ -13,14 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        shell: pwsh   # <-- run steps use PowerShell 7
+        shell: pwsh
     permissions:
-      id-token: write     # for OIDC
+      id-token: write
       contents: read
+
+    env:
+      TF_IN_AUTOMATION: "true"
+
     steps:
       - uses: actions/checkout@v4
 
+      # For pull_request from forks, skip cloud auth/backend (no secrets).
       - name: Azure login (OIDC)
+        if: github.event_name == 'push'
         uses: azure/login@v2
         with:
           client-id:       ${{ secrets.AZURE_CLIENT_ID }}
@@ -30,25 +36,42 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init
+      # Validate always; init/plan only on push (when secrets are available)
+      - name: Terraform Validate (no-backend on PRs)
+        working-directory: infra
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false -input=false
+          terraform validate
+
+      - name: Terraform Init (remote backend, OIDC)  # only on push
+        if: github.event_name == 'push'
         working-directory: infra
         env:
-          TFSTATE_ACCOUNT: ${{ vars.TFSTATE_ACCOUNT }}
+          TFSTATE_ACCOUNT:           ${{ vars.TFSTATE_ACCOUNT }}
+          ARM_USE_OIDC:              "true"
+          ARM_CLIENT_ID:             ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID:             ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID:       ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: |
-          terraform init `
+          terraform init -input=false `
             -backend-config="resource_group_name=rg-tfstate" `
             -backend-config="storage_account_name=$env:TFSTATE_ACCOUNT" `
             -backend-config="container_name=tfstate" `
-            -backend-config="key=foundation.tfstate"
+            -backend-config="key=foundation.tfstate" `
+            -backend-config="use_azuread_auth=true"
 
-      - name: Terraform Validate & Plan
+      - name: Terraform Plan (push only)
+        if: github.event_name == 'push'
         working-directory: infra
         env:
+          ARM_USE_OIDC:        "true"
+          ARM_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID:       ${{ secrets.AZURE_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: |
-          terraform fmt -check -recursive
-          terraform validate
-          terraform plan -input=false -var "subscription_id=$env:ARM_SUBSCRIPTION_ID"
+          terraform plan -input=false -no-color `
+            -var "subscription_id=$env:ARM_SUBSCRIPTION_ID"
 
   apply:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -60,6 +83,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      TF_IN_AUTOMATION: "true"
     steps:
       - uses: actions/checkout@v4
 
@@ -73,20 +98,29 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init
+      - name: Terraform Init (remote backend, OIDC)
         working-directory: infra
         env:
-          TFSTATE_ACCOUNT: ${{ vars.TFSTATE_ACCOUNT }}
+          TFSTATE_ACCOUNT:           ${{ vars.TFSTATE_ACCOUNT }}
+          ARM_USE_OIDC:              "true"
+          ARM_CLIENT_ID:             ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID:             ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID:       ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: |
-          terraform init `
+          terraform init -input=false `
             -backend-config="resource_group_name=rg-tfstate" `
             -backend-config="storage_account_name=$env:TFSTATE_ACCOUNT" `
             -backend-config="container_name=tfstate" `
-            -backend-config="key=foundation.tfstate"
+            -backend-config="key=foundation.tfstate" `
+            -backend-config="use_azuread_auth=true"
 
       - name: Terraform Apply
         working-directory: infra
         env:
+          ARM_USE_OIDC:        "true"
+          ARM_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID:       ${{ secrets.AZURE_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: |
-          terraform apply -auto-approve -input=false -var "subscription_id=$env:ARM_SUBSCRIPTION_ID"
+          terraform apply -auto-approve -input=false `
+            -var "subscription_id=$env:ARM_SUBSCRIPTION_ID"
