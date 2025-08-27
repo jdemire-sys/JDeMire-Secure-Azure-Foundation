@@ -74,14 +74,29 @@ This project demonstrates core Azure administration (AZ-104), security engineeri
 
 ## Repo Structure
 ```
+.github/
+   workflows/
+      terraform.yml
+
+docs/
+  portal-budget.png                  # Screenshot of the created budget guardrails
+  portal-nsg.png                     # Screenshot of the created NSG
+  portal-policies.png                # Screenshot of the created policies
+  portal-rgs.png                     # Screenshot of the created resource groups
+  portal-vnet-subnet-nsg_assoc.png   # Screenshot of the Vnet, Subnet, and NSG Association
+
 infra/
+  backend.tf                 # Used Azure storage as a remote backend     
   main.tf                    # Resource groups, networking baseline
-  policy-definitions.tf      # Policy definitions and assignments
-  variables.tf               # Inputs (location, tags, etc.)
   outputs.tf                 # Key resource outputs
+  policy-definitions.tf      # Policy definitions and assignments
   providers.tf               # Azure providers used for this project
-  backend.tf                 # Used Azure storage as a remote backend
-  ```
+  variables.tf               # Inputs (location, tags, etc.)
+
+.gitignore
+
+README.md
+```
 
 
 
