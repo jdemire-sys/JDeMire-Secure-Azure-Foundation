@@ -3,76 +3,77 @@
 ![Terraform CI](https://github.com/jdemire-sys/JDeMire-Secure-Azure-Foundation/actions/workflows/terraform.yml/badge.svg?branch=main)
 
 
-My first cloud project to demonstrate my cloud skills.
+This is my first cloud project to serve as proof of my skills.
 This project demonstrates core Azure administration (AZ-104), security engineering (AZ-500), and Terraform Associate skills with a zero-cost footprint on an Azure for Students subscription.
 
-What I Built:
+## What I Built:
 
-Resource Groups (RGs):
+### Resource Groups (RGs):
 
-rg-platform – core/shared services
+- rg-platform – core/shared services
 
-rg-landing – workload landing zone
-
-
-
-Networking:
-
-Virtual Network (vnet-landing) with an App subnet (snet-app)
-
-Network Security Group (nsg-landing) applied to the subnet
+- rg-landing – workload landing zone
 
 
 
-Policy-as-Code (Azure Policy + Terraform):
+### Networking:
 
-Enforce required tags on every RG and resource
+- Virtual Network (vnet-landing) with an App subnet (snet-app)
 
-Restrict deployments to East US
-
-Deny creation of Public IP addresses
+- Network Security Group (nsg-landing) applied to the subnet
 
 
 
+### Policy-as-Code (Azure Policy + Terraform):
 
-RBAC / Identity:
+- Enforce required tags on every RG and resource
 
-Scoped CI/CD identity at RG level for least privilege
+- Restrict deployments to East US
 
-Ready to integrate with GitHub OIDC
+- Deny creation of Public IP addresses
 
 
 
 
-Key Outcomes
+### RBAC / Identity:
 
-Automated a baseline secure Azure environment with Terraform
+- Scoped CI/CD identity at RG level for least privilege
 
-Enforced governance guardrails via Azure Policy (tags, region, no public IPs)
-
-Applied least privilege RBAC at RG scope (no subscription-wide over-permissioning)
-
-Delivered cost-efficient demo using only free resources (no VMs, NAT, Firewalls, etc.)
+- Ready to integrate with GitHub OIDC
 
 
 
 
-Skills Demonstrated
+## Key Outcomes
 
-Infrastructure as Code (Terraform)
+- Automated a baseline secure Azure environment with Terraform
 
-Policy as Code (Azure Policy + Terraform integration)
+- Enforced governance guardrails via Azure Policy (tags, region, no public IPs)
 
-Azure Governance (RBAC, tagging strategy, allowed locations, deny rules)
+- Applied least privilege RBAC at RG scope (no subscription-wide over-permissioning)
 
-Secure Cloud Networking (VNets, subnets, NSGs)
-
-Cost Awareness (student subscription guardrails)
+- Delivered cost-efficient demo using only free resources (no VMs, NAT, Firewalls, etc.)
 
 
 
 
-Repo Structure
+## Skills Demonstrated
+
+- Infrastructure as Code (Terraform)
+
+- Policy as Code (Azure Policy + Terraform integration)
+
+- Azure Governance (RBAC, tagging strategy, allowed locations, deny rules)
+
+- Secure Cloud Networking (VNets, subnets, NSGs)
+
+- Cost Awareness (student subscription guardrails)
+
+
+
+
+## Repo Structure
+```
 infra/
   main.tf                    # Resource groups, networking baseline
   policy-definitions.tf      # Policy definitions and assignments
@@ -80,18 +81,19 @@ infra/
   outputs.tf                 # Key resource outputs
   providers.tf               # Azure providers used for this project
   backend.tf                 # Used Azure storage as a remote backend
+  ```
 
 
 
 
-Why It Matters
+## Why It Matters
 
-This project shows that I can:
+- This project shows that I can:
 
-Build Azure environments from scratch with code
+- Build Azure environments from scratch with code
 
-Apply security and governance best practices from day one
+- Apply security and governance best practices from day one
 
-Work within cost constraints (important for both students and enterprises)
+- Work within cost constraints (important for both students and enterprises)
 
-Set up a foundation that can be extended into enterprise-grade landing zones
+- Set up a foundation that can be extended into enterprise-grade landing zones
