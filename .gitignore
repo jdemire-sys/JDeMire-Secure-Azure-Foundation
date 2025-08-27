@@ -1,0 +1,37 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+#Local var files (never commit)
+terraform.tfvars
+*.tfvars
+*.tfvars.json
+
+#Local overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+
+#Plans
+*.tfplan
+*.plan
+
+#Keep provider lock file in Git
+!.terraform.lock.hcl
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env*
+'@ | Out-File -FilePath ".gitignore" -Encoding utf8 -NoNewline
