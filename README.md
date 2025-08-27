@@ -95,6 +95,7 @@ infra/
 
 .gitignore
 
+LICENSE
 README.md
 ```
 
